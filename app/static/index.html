@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>Soup | Experiment tracking</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>SOUP<span class="brand-muted"> / labs</span></span></div>
+      <div class="side-label">WORKSPACE</div>
+      <div class="workspace-avatar" id="workspaceAvatar">✳</div>
+      <div class="workspace-name" id="workspaceName">Not connected</div>
+      <div class="workspace-meta" id="workspaceMeta">Create or connect a project</div>
+      <nav class="side-nav" aria-label="Primary">
+        <a href="#runs" class="side-link active" id="runsLink"><span aria-hidden="true">▦</span> Experiments</a>
+        <button type="button" class="side-link" id="switchProject"><span aria-hidden="true">⌁</span> Switch project</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-hint"><span class="tiny-dot"></span> Durable events, not magic</div>
+        <div class="sidebar-version">ENGINEERING DEMO / V1.0</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar"><span class="breadcrumb">Workspace <span class="slash">/</span> <span id="breadcrumbCurrent">Experiments</span></span><span class="env-indicator"><span class="tiny-dot"></span> LOCAL ENVIRONMENT</span></div>
+
+      <section class="welcome" id="welcome" aria-labelledby="welcomeTitle">
+        <div class="eyebrow"><span class="dash"></span> WELCOME TO SOUP LABS</div>
+        <h1 id="welcomeTitle">Every experiment<br><em>tells a story.</em></h1>
+        <p class="lead">Track metrics with confidence. See live updates, survive network drops, and keep each project's data private.</p>
+        <div class="auth-grid">
+          <form class="surface auth-panel" id="createProjectForm">
+            <div class="panel-kicker">01 / GET STARTED</div>
+            <h2>Create a workspace</h2>
+            <p>You'll receive a secret API key. Save it: it won't be shown again.</p>
+            <label for="projectName">Workspace name</label>
+            <input id="projectName" autocomplete="off" maxlength="80" required placeholder="e.g. Model Research" value="My Experiments">
+            <button type="submit" class="btn btn-primary">Create workspace <span aria-hidden="true">↗</span></button>
+          </form>
+          <form class="surface auth-panel" id="connectForm">
+            <div class="panel-kicker">02 / RETURNING?</div>
+            <h2>Connect your project</h2>
+            <p>Paste an existing API key. We keep it in this tab's session storage, never in the URL.</p>
+            <label for="existingKey">Project API key</label>
+            <input id="existingKey" type="password" autocomplete="off" required placeholder="soup_••••••••••••••••">
+            <button type="submit" class="btn btn-secondary">Connect workspace <span aria-hidden="true">→</span></button>
+          </form>
+        </div>
+        <section class="surface key-panel hidden" id="keyPanel" aria-live="polite">
+          <div><div class="panel-kicker">SAVE YOUR SECRET</div><h2>Workspace created.</h2><p>Copy this API key now. It is only returned during creation and rotation.</p></div>
+          <div class="key-row"><input id="newKey" readonly aria-label="New API key"><button class="btn btn-small" id="copyKey" type="button">Copy key</button></div>
+          <button class="btn btn-primary" id="enterProject" type="button">Open workspace <span aria-hidden="true">↗</span></button>
+        </section>
+      </section>
+
+      <section class="dashboard hidden" id="dashboard" aria-label="Experiment dashboard">
+        <div class="dashboard-title-row"><div><div class="eyebrow"><span class="dash"></span> YOUR EXPERIMENTS</div><h1>Experiment <em>overview.</em></h1><p class="lead compact">A reliable source of truth for every metric your models produce.</p></div><button class="btn btn-primary" id="newRunButton">+ New experiment</button></div>
+        <div class="stat-grid">
+          <div class="stat-card"><span class="stat-label">TOTAL RUNS</span><strong id="statRuns">0</strong><span class="stat-foot">Across this workspace</span></div>
+          <div class="stat-card"><span class="stat-label">METRIC EVENTS</span><strong id="statEvents">0</strong><span class="stat-foot">Committed to storage</span></div>
+          <div class="stat-card"><span class="stat-label">DATA INTEGRITY</span><strong class="stat-word">Protected</strong><span class="stat-foot">Idempotent, project-scoped</span></div>
+        </div>
+        <div class="section-header"><div><span class="panel-kicker">ALL RUNS</span><h2>Recent experiments</h2></div><button class="text-button" id="refreshRuns">Refresh ↻</button></div>
+        <div class="surface table-wrap"><table class="runs-table"><thead><tr><th>EXPERIMENT</th><th>EVENTS</th><th>CREATED</th><th>STATUS</th><th></th></tr></thead><tbody id="runsBody"></tbody></table><div class="empty-state hidden" id="runsEmpty"><div class="empty-icon">◈</div><h3>No experiments yet</h3><p>Create your first experiment to start streaming metric events.</p><button class="btn btn-secondary" id="emptyNewRun">+ Create experiment</button></div></div>
+        <div class="howto surface"><div class="howto-icon">↗</div><div><strong>Send metrics from any client</strong><p>Create a run, then copy a ready-to-use curl command from its details. Batch retries are safe.</p></div></div>
+      </section>
+
+      <section class="run-view hidden" id="runView" aria-label="Experiment details">
+        <button class="back-link" id="backButton">← All experiments</button>
+        <div class="run-head"><div><div class="eyebrow"><span class="dash"></span> LIVE EXPERIMENT</div><h1 id="runTitle">Experiment</h1><div class="run-id">RUN ID <span id="runIdText"></span> <button id="copyRunId" class="mini-copy" aria-label="Copy run ID">▣</button></div></div><div class="status-pill" id="liveStatus"><span class="pulse-dot"></span><span id="liveText">Connecting</span></div></div>
+        <div class="stat-grid detail-stats"><div class="stat-card"><span class="stat-label">TOTAL EVENTS</span><strong id="detailCount">0</strong><span class="stat-foot">Verified server cursor</span></div><div class="stat-card"><span class="stat-label">STREAM CURSOR</span><strong id="detailCursor">0</strong><span class="stat-foot">Contiguous replay order</span></div><div class="stat-card"><span class="stat-label">DISTINCT METRICS</span><strong id="detailMetrics">0</strong><span class="stat-foot">Unique metric names</span></div></div>
+        <div class="run-columns"><div class="surface chart-panel"><div class="section-header"><div><span class="panel-kicker">METRIC TREND</span><h2>Performance over time</h2></div><select id="metricSelect" aria-label="Choose metric"></select></div><div class="chart-summary"><strong id="currentValue">—</strong><span id="chartDescription">Awaiting metrics</span></div><svg id="metricChart" viewBox="0 0 660 240" role="img" aria-label="Metrics line chart"><text x="330" y="125" text-anchor="middle" fill="#66718a">No metrics yet</text></svg><div class="chart-axis"><span>EARLIER EVENTS</span><span>RECENT EVENTS</span></div></div><div class="surface integration-panel"><div class="panel-kicker">CLIENT INTEGRATION</div><h2>Send an event</h2><p>Authenticate using a request header, not a URL parameter. Retries won't duplicate the event.</p><pre class="code-sample"><code id="curlSnippet"></code></pre><button class="btn btn-secondary btn-full" id="copyCurl">Copy curl snippet <span aria-hidden="true">▣</span></button><div class="integration-note"><span>✳</span> <span>Unique <code>batch_id</code> per batch; stable <code>event_id</code> per measurement.</span></div><button class="demo-btn" id="sendDemo">+ Add 12 demo events</button></div></div>
+        <div class="surface events-panel"><div class="section-header"><div><span class="panel-kicker">EVENT LOG</span><h2>Latest committed events</h2></div><span class="events-caption">Ordered by server sequence · latest first</span></div><div class="table-wrap"><table class="runs-table event-table"><thead><tr><th>SEQUENCE</th><th>METRIC</th><th>VALUE</th><th>OBSERVED AT</th><th>RECEIVED AT</th></tr></thead><tbody id="eventsBody"></tbody></table><div class="empty-state small-empty hidden" id="eventsEmpty">No events yet. Try the demo or send a batch via API.</div></div></div>
+      </section>
+
+      <footer class="footer"><span>SOUP LABS <span class="footer-split">/</span> Experiments you can trust</span><span>Built for correctness, not just pretty charts.</span></footer>
+    </main>
+  </div>
+  <div class="modal-backdrop hidden" id="modal" role="presentation"><form class="modal surface" id="newRunForm" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="panel-kicker">NEW EXPERIMENT</div><h2 id="modalTitle">What are you testing?</h2><p>Give your experiment a descriptive name. You can send metrics immediately.</p><label for="runName">Experiment name</label><input id="runName" required maxlength="80" placeholder="e.g. baseline-vs-finetune"><div class="modal-actions"><button class="btn btn-secondary" type="button" id="cancelModal">Cancel</button><button class="btn btn-primary" type="submit">Create experiment ↗</button></div></form></div>
+  <div class="toast hidden" role="status" id="toast"></div>
+</body>
+</html>

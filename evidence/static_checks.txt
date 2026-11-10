@@ -1,0 +1,4 @@
+JavaScript syntax: PASS
+Python compileall: PASS
+Compose YAML parsing: PASS
+PDF page count: PASS (design 1, note 2)

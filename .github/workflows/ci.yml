@@ -1,0 +1,27 @@
+name: verify
+on:
+  push:
+  pull_request:
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: API, database, and real-browser tests
+        run: python -m pytest -vv -ra
+      - name: Short pulse (informational non-production benchmark)
+        run: python scripts/load_probe.py
+      - name: Docker build and health check
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:8000/api/health && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8000/api/health
+          docker compose down -v

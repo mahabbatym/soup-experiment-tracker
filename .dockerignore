@@ -1,0 +1,12 @@
+.git
+.pytest_cache
+__pycache__
+*.pyc
+.venv
+*.sqlite3
+*.sqlite3-*
+.evidence
+runs
+node_modules
+tests
+evidence

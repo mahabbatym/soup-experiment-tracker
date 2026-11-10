@@ -1,0 +1,5 @@
+Environment probe: 2026-11-10
+docker: not found
+bash: line 39: docker: command not found
+Python 3.13.5
+v22.16.0

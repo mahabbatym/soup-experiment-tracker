@@ -1,0 +1,85 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-9.2.0, pluggy-1.7.0 -- /Users/milady/Desktop/soup-experiment-tracker/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/milady/Desktop/soup-experiment-tracker
+plugins: anyio-4.16.0
+collecting ... collected 13 items
+
+tests/test_api.py::test_project_creation_and_auth PASSED                 [  7%]
+tests/test_api.py::test_batches_are_idempotent_and_ordered_by_commit_not_client_time PASSED [ 15%]
+tests/test_api.py::test_batch_id_mutation_rejected_and_no_partial_write PASSED [ 23%]
+tests/test_api.py::test_tenant_cannot_read_write_or_subscribe_and_unknown_ids_are_uniform PASSED [ 30%]
+tests/test_api.py::test_key_rotation_old_key_stops_everywhere_immediately PASSED [ 38%]
+tests/test_api.py::test_reconnect_cursor_catches_up_all_missed_events PASSED [ 46%]
+tests/test_api.py::test_slow_reader_uses_bounded_pages_with_no_queue_or_loss PASSED [ 53%]
+tests/test_api.py::test_invalid_payloads_are_rejected_without_side_effects PASSED [ 61%]
+tests/test_api.py::test_parallel_writers_allocate_gap_free_sequences PASSED [ 69%]
+tests/test_api.py::test_key_not_returned_in_lists_or_run_detail PASSED   [ 76%]
+tests/test_api.py::test_exact_assignment_ingest_route_alias PASSED       [ 84%]
+tests/test_e2e.py::test_browser_api_db_match_after_reorder_duplicate_late_disconnect FAILED [ 92%]
+tests/test_stream_e2e.py::test_real_http_stream_disconnect_reconnect_and_database_match PASSED [100%]
+
+=================================== FAILURES ===================================
+______ test_browser_api_db_match_after_reorder_duplicate_late_disconnect _______
+
+server = ('http://127.0.0.1:57682', PosixPath('/private/var/folders/kd/j5xhzw512h39dk6rf_01fxkw0000gn/T/pytest-of-milady/pytest-1/live-ui0/tracker.sqlite3'))
+
+    def test_browser_api_db_match_after_reorder_duplicate_late_disconnect(server):
+        base, database_path = server
+        with sync_playwright() as p:
+            browser_path = os.environ.get('SOUP_CHROMIUM_PATH') or shutil.which('chromium')
+            options = {'executable_path': browser_path} if browser_path else {}
+>           browser = p.chromium.launch(headless=True,
+                                        args=['--no-sandbox','--disable-dev-shm-usage'], **options)
+
+tests/test_e2e.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.13/site-packages/playwright/sync_api/_generated.py:4113: in launch
+    self._sync(
+.venv/lib/python3.13/site-packages/playwright/_impl/channel_owner.py:387: in finish
+    raise e from None
+.venv/lib/python3.13/site-packages/playwright/_impl/channel_owner.py:352: in finish
+    result = await zone.run_async(lambda: awaitable)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/playwright/_impl/utils/zones.py:58: in run_async
+    return await func()
+           ^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/playwright/_impl/browser_type.py:176: in launch
+    await self._channel.launch(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+awaitable = <Future finished exception=Error("Executable doesn't exist at /Users/milady/Library/Caches/ms-playwright/chromium_head...right Team                                         ║\n╚════════════════════════════════════════════════════════════╝")>
+mapper = <function BrowserTypeChannel.launch.<locals>.<lambda> at 0x10ae7efc0>
+
+    async def _mapped(awaitable: Awaitable[Any], mapper: Callable[[Any], Any]) -> Any:
+        # Python: the result of a channel call, mapped by the generated channel method.
+>       return mapper(await awaitable)
+                      ^^^^^^^^^^^^^^^
+E       playwright._impl._errors.Error: BrowserType.launch: Executable doesn't exist at /Users/milady/Library/Caches/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-mac-arm64/chrome-headless-shell
+E       ╔════════════════════════════════════════════════════════════╗
+E       ║ Looks like Playwright was just installed or updated.       ║
+E       ║ Please run the following command to download new browsers: ║
+E       ║                                                            ║
+E       ║     playwright install                                     ║
+E       ║                                                            ║
+E       ║ <3 Playwright Team                                         ║
+E       ╚════════════════════════════════════════════════════════════╝
+
+.venv/lib/python3.13/site-packages/playwright/_impl/channel_owner.py:398: Error
+=============================== warnings summary ===============================
+.venv/lib/python3.13/site-packages/starlette/testclient.py:45
+  /Users/milady/Desktop/soup-experiment-tracker/.venv/lib/python3.13/site-packages/starlette/testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_e2e.py::test_browser_api_db_match_after_reorder_duplicate_late_disconnect - playwright._impl._errors.Error: BrowserType.launch: Executable doesn't exist at /Users/milady/Library/Caches/ms-playwright/chromium_headless_shell-1254/chrome-headless-shell-mac-arm64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+=================== 1 failed, 12 passed, 1 warning in 2.04s ====================

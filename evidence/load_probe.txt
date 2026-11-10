@@ -1,0 +1,16 @@
+streams_opened: 50
+round_1_complete: +500 events
+round_2_complete: +500 events
+round_3_complete: +500 events
+round_4_complete: +500 events
+expected_events: 2000
+db_committed: 2000
+stream_received: 2000
+all_cursors_gap_free: True
+all_db_run_counts_match: True
+http_failures: []
+ingest_window_seconds: 3.362
+observed_overall_ingest_rate_ev_per_s: 595.0
+http_batch_latency_ms_max: 919.8
+http_batch_latency_ms_avg: 194.4
+RESULT: PASS (short local pulse; not production validation)
